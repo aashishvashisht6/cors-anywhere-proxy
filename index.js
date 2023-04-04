@@ -12,8 +12,8 @@ const verifyToken = require("./middlewares/auth");
 const pool = mariadb.createPool({
   host: "localhost",
   user: "root",
-  password: "justdoit@94",
-  database: "node_cors_db",
+  password: "",
+  database: "",
   connectionLimit: 10,
 });
 
