@@ -4,6 +4,7 @@ const axios = require("axios");
 const app = express();
 app.use(express.json());
 app.use(cors())
+require('dotenv').config()
 
 
 const mariadb = require("mariadb");
@@ -11,10 +12,10 @@ const jwt = require("jsonwebtoken");
 const verifyToken = require("./middlewares/auth");
 
 const pool = mariadb.createPool({
-  host: "",
-  user: "",
-  password: "",
-  database: "",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PWD,
+  database: process.env.DB_database,
   connectionLimit: 10,
 });
 
@@ -29,7 +30,7 @@ app.get("/register", async (req, res) => {
 
   try {
     conn = await pool.getConnection();
-    const data = await conn.query(`select email from tabUser where email='${req.user.email}'`)
+    const data = await conn.query(`select email from tabUser where email='${email}'`)
     if(! data[0].email){
       const rows = await conn.query("insert into tabUser (email) values (?)", [
         email,
