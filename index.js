@@ -31,7 +31,7 @@ app.get("/register", async (req, res) => {
   try {
     conn = await pool.getConnection();
     const data = await conn.query(`select email from tabUser where email='${email}'`)
-    if(! data[0].email){
+    if(! (data && data.length > 0 && data[0].email)){
       const rows = await conn.query("insert into tabUser (email) values (?)", [
         email,
       ]);
