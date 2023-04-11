@@ -5,13 +5,14 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
+
 const mariadb = require("mariadb");
 const jwt = require("jsonwebtoken");
 const verifyToken = require("./middlewares/auth");
 
 const pool = mariadb.createPool({
-  host: "localhost",
-  user: "root",
+  host: "",
+  user: "",
   password: "",
   database: "",
   connectionLimit: 10,
@@ -48,19 +49,23 @@ app.get("/api", verifyToken, async (req, res) => {
 
   delete req_query.url;
   delete req_body.url;
-
+  
   if (req_query) {
-    url += "?";
+    console.log(new URL(url).searchParams)
+    url += new URL(url).searchParams? "&": '?';
     for (const [key, value] of Object.entries(req_query)) {
-      url += key.toString() + "=" + value;
+      url += key.toString() + "=" + value +"&";
     }
   }
+  
   let conn;
   try {
     conn = await pool.getConnection();
     const rows = await conn.query(
       `select cookies from tabUser where email='${req.user.email}'`
     );
+    console.log(url)
+    console.log(rows)
 
     axios
       .get(url, {
@@ -101,7 +106,7 @@ app.post("/api", verifyToken, async (req, res) => {
   if (req_query) {
     url += "?";
     for (const [key, value] of Object.entries(req_query)) {
-      url += key.toString() + "=" + value;
+      url += key.toString() + "=" + value + "&";
     }
   }
   let conn;
@@ -150,7 +155,7 @@ app.put("/api", verifyToken, async (req, res) => {
   if (req_query) {
     url += "?";
     for (const [key, value] of Object.entries(req_query)) {
-      url += key.toString() + "=" + value;
+      url += key.toString() + "=" + value + "&";
     }
   }
   let conn;
@@ -199,7 +204,7 @@ app.delete("/api", verifyToken, async (req, res) => {
   if (req_query) {
     url += "?";
     for (const [key, value] of Object.entries(req_query)) {
-      url += key.toString() + "=" + value;
+      url += key.toString() + "=" + value + "&";
     }
   }
   let conn;
