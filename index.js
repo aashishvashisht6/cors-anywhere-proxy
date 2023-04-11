@@ -29,9 +29,13 @@ app.get("/register", async (req, res) => {
 
   try {
     conn = await pool.getConnection();
-    const rows = await conn.query("insert into tabUser (email) values (?)", [
-      email,
-    ]);
+    const data = await conn.query(`select email from tabUser where email='${req.user.email}'`)
+    if(! data[0].email){
+      const rows = await conn.query("insert into tabUser (email) values (?)", [
+        email,
+      ]);
+    }
+    
   } finally {
     if (conn) conn.release(); //release to pool
   }
