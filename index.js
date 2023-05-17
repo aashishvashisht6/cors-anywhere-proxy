@@ -35,7 +35,7 @@ app.get("/register", async (req, res) => {
       const rows = await conn.query("insert into tabUser (email) values (?)", [
         email,
       ]);
-    }
+    } 
     
   } finally {
     if (conn) conn.release(); //release to pool
@@ -55,9 +55,10 @@ app.get("/api", verifyToken, async (req, res) => {
   delete req_query.url;
   delete req_body.url;
   
-  if (req_query) {
-    console.log(new URL(url).searchParams)
-    url += new URL(url).searchParams? "&": '?';
+  if ( Object.keys(req_query).length > 0) {
+    
+    url += req_query ? "&" : '?';
+    console.log(url)
     for (const [key, value] of Object.entries(req_query)) {
       url += key.toString() + "=" + value +"&";
     }
@@ -80,6 +81,7 @@ app.get("/api", verifyToken, async (req, res) => {
         params: req_body,
       })
       .then(async (result) => {
+        console.log(result.headers.get("set-cookie"))
         const query = `update tabUser set cookies = '${JSON.stringify(
           result.headers.get("set-cookie")
         )}' where email = '${req.user.email}'`;
@@ -108,12 +110,15 @@ app.post("/api", verifyToken, async (req, res) => {
   delete req_query.url;
   delete req_body.url;
 
-  if (req_query) {
-    url += "?";
+  if ( Object.keys(req_query).length > 0) {
+    
+    url += req_query ? "&" : '?';
+    console.log(url)
     for (const [key, value] of Object.entries(req_query)) {
-      url += key.toString() + "=" + value + "&";
+      url += key.toString() + "=" + value +"&";
     }
   }
+
   let conn;
   try {
     conn = await pool.getConnection();
@@ -157,12 +162,16 @@ app.put("/api", verifyToken, async (req, res) => {
   delete req_query.url;
   delete req_body.url;
 
-  if (req_query) {
-    url += "?";
+  if ( Object.keys(req_query).length > 0) {
+    
+    url += req_query ? "&" : '?';
+    console.log(url)
     for (const [key, value] of Object.entries(req_query)) {
-      url += key.toString() + "=" + value + "&";
+      url += key.toString() + "=" + value +"&";
     }
   }
+
+
   let conn;
   try {
     conn = await pool.getConnection();
@@ -206,12 +215,16 @@ app.delete("/api", verifyToken, async (req, res) => {
   delete req_query.url;
   delete req_body.url;
 
-  if (req_query) {
-    url += "?";
+  if ( Object.keys(req_query).length > 0) {
+    
+    url += req_query ? "&" : '?';
+    console.log(url)
     for (const [key, value] of Object.entries(req_query)) {
-      url += key.toString() + "=" + value + "&";
+      url += key.toString() + "=" + value +"&";
     }
   }
+
+  
   let conn;
   try {
     conn = await pool.getConnection();
